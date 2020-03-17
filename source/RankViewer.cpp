@@ -27,7 +27,7 @@ int unranker(int mode, int rank, int div, bool upperLimit) {
     int realRank, realDiv, realHeight;
 
     // Changes the rank to descending 
-    int rankIndex[] = {19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+    int rankIndex[] = { 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
     realRank = rankIndex[rank];
 
     // Since the divisions are descending in the array, we have to flip the index around
@@ -66,199 +66,86 @@ int unranker(int mode, int rank, int div, bool upperLimit) {
     else if (mode == 30) {
         return snowday[realRank][realDiv][realHeight];
     }
-    
+
 }
 
 void colorNamer(int rank) {
+    int schemes[20][3] =
+    {
+        { 133, 133, 133 }, // Unranked | 0
+        { 227, 151, 68 },  // Bronze 1 | 1
+        { 227, 151, 68}, // Bronze 2 | 2
+        { 227, 151, 68}, // Bronze 3 | 3
+        { 133, 133, 133}, // Silver 1 | 4
+        { 133, 133, 133}, // Silver 2 | 5
+        { 133, 133, 133}, // Silver 3 | 6
+        { 202, 149, 31}, // Gold 1 | 7
+        { 202, 149, 31}, // Gold 2 | 8
+        { 202, 149, 31}, // Gold 3 | 9
+        { 50, 204, 252}, // Platinum 1 | 10
+        { 50, 204, 252}, // Platinum 2 | 11
+        { 50, 204, 252}, // Platinum 3 | 12
+        { 2, 188, 255}, // Diamond 1 | 13
+        { 2, 188, 255}, // Diamond 2 | 14
+        { 2, 188, 255}, // Diamond 3 | 15
+        { 202, 137, 255 }, // Champion 1 | 16
+        { 202, 137, 255 }, // Champion 2 | 17
+        { 202, 137, 255 }, // Champion 3 | 18
+        { 244, 56, 236 } // Grand Champion | 19
+    };
 
-    if (rank == 0) {
-        colorScheme[0] = 133;
-        colorScheme[1] = 133;
-        colorScheme[2] = 133;
-    }
-    else if (rank == 1) {
-        colorScheme[0] = 227;
-        colorScheme[1] = 151;
-        colorScheme[2] = 68;
-    }
-    else if (rank == 2) {
-        colorScheme[0] = 227;
-        colorScheme[1] = 151;
-        colorScheme[2] = 68;
-    }
-    else if (rank == 3) {
-        colorScheme[0] = 227;
-        colorScheme[1] = 151;
-        colorScheme[2] = 68;
-    }
-    else if (rank == 4) {
-        colorScheme[0] = 133;
-        colorScheme[1] = 133;
-        colorScheme[2] = 133;
-    }
-    else if (rank == 5) {
-        colorScheme[0] = 133;
-        colorScheme[1] = 133;
-        colorScheme[2] = 133;
-    }
-    else if (rank == 6) {
-        colorScheme[0] = 133;
-        colorScheme[1] = 133;
-        colorScheme[2] = 133;
-    }
-    else if (rank == 7) {
-        colorScheme[0] = 202;
-        colorScheme[1] = 149;
-        colorScheme[2] = 31;
-    }
-    else if (rank == 8) {
-        colorScheme[0] = 202;
-        colorScheme[1] = 149;
-        colorScheme[2] = 31;
-    }
-    else if (rank == 9) {
-        colorScheme[0] = 202;
-        colorScheme[1] = 149;
-        colorScheme[2] = 31;
-    }
-    else if (rank == 10) {
-        colorScheme[0] = 50;
-        colorScheme[1] = 204;
-        colorScheme[2] = 252;
-    }
-    else if (rank == 11) {
-        colorScheme[0] = 50;
-        colorScheme[1] = 204;
-        colorScheme[2] = 252;
-    }
-    else if (rank == 12) {
-        colorScheme[0] = 50;
-        colorScheme[1] = 204;
-        colorScheme[2] = 252;
-    }
-    else if (rank == 13) {
-        colorScheme[0] = 2;
-        colorScheme[1] = 188;
-        colorScheme[2] = 255;
-    }
-    else if (rank == 14) {
-        colorScheme[0] = 2;
-        colorScheme[1] = 188;
-        colorScheme[2] = 255;
-    }
-    else if (rank == 15) {
-        colorScheme[0] = 202;
-        colorScheme[1] = 137;
-        colorScheme[2] = 255;
-    }
-    else if (rank == 16) {
-        colorScheme[0] = 202;
-        colorScheme[1] = 137;
-        colorScheme[2] = 255;
-    }
-    else if (rank == 17) {
-        colorScheme[0] = 202;
-        colorScheme[1] = 137;
-        colorScheme[2] = 255;
-    }
-    else if (rank == 18) {
-        colorScheme[0] = 202;
-        colorScheme[1] = 137;
-        colorScheme[2] = 255;
-    }
-    else if (rank == 19) {
-        colorScheme[0] = 244;
-        colorScheme[1] = 56;
-        colorScheme[2] = 236;
-    }
+    colorScheme[0] = schemes[rank][0];
+    colorScheme[1] = schemes[rank][1];
+    colorScheme[2] = schemes[rank][2];
 }
 
 string rankNamer(int rank, int div) {
     string fullName = "";
-    if (rank == 0) {
-        fullName += "Unranked";
-    }
-    else if (rank == 1) {
-        fullName += "Bronze 1";
-    }
-    else if (rank == 2) {
-        fullName += "Bronze 2";
-    }
-    else if (rank == 3) {
-        fullName += "Bronze 3";
-    }
-    else if (rank == 4) {
-        fullName += "Silver 1";
-    }
-    else if (rank == 5) {
-        fullName += "Silver 2";
-    }
-    else if (rank == 6) {
-        fullName += "Silver 3";
-    }
-    else if (rank == 7) {
-        fullName += "Gold 1";
-    }
-    else if (rank == 8) {
-        fullName += "Gold 2";
-    }
-    else if (rank == 9) {
-        fullName += "Gold 3";
-    }
-    else if (rank == 10) {
-        fullName += "Platinum 1";
-    }
-    else if (rank == 11) {
-        fullName += "Platinum 2";
-    }
-    else if (rank == 12) {
-        fullName += "Platinum 3";
-    }
-    else if (rank == 13) {
-        fullName += "Diamond 1";
-    }
-    else if (rank == 14) {
-        fullName += "Diamond 2";
-    }
-    else if (rank == 15) {
-        fullName += "Diamond 3";
-    }
-    else if (rank == 16) {
-        fullName += "Champion 1";
-    }
-    else if (rank == 17) {
-        fullName += "Champion 2";
-    }
-    else if (rank == 18) {
-        fullName += "Champion 3";
-    }
-    else if (rank == 19) {
-        fullName += "Grand Champion";
-        return fullName;
-    }
 
-    if (div == 0) {
-        fullName += " Div 1";
-        return fullName;
-    }
-    else if (div == 1) {
-        fullName += " Div 2";
-        return fullName;
-    }
-    else if (div == 2) {
-        fullName += " Div 3";
-        return fullName;
-    }
-    else if (div == 3) {
-        fullName += " Div 4";
-        return fullName;
-    }
+    string rankNames[] =
+    {
+        "Unranked",
+        "Bronze 1",
+        "Bronze 2",
+        "Bronze 3",
+        "Silver 1",
+        "Silver 2",
+        "Silver 3",
+        "Gold 1",
+        "Gold 2",
+        "Gold 3",
+        "Platinum 1",
+        "Platinum 2",
+        "Platinum 3",
+        "Diamond 1",
+        "Diamond 2",
+        "Diamond 3",
+        "Champion 1",
+        "Champion 2",
+        "Champion 3",
+        "Grand Champion"
+    };
+
+    string divNames[] =
+    {
+        " Div 1",
+        " Div 2",
+        " Div 3",
+        " Div 4"
+    };
+
+    fullName += rankNames[rank];
+
+    if (fullName.find("Grand Champion") == string::npos)
+        fullName += divNames[div];
+
+    return fullName;
 }
 
 void RankViewer::onLoad()
 {
     // Setting for if the plugin is enabled
-	cvarManager->registerCvar("rankviewer_enabled", "1", "Enable or Disable the Rank Viewer Plugin", true, true, 0, true, 1, true);
+    cvarManager->registerCvar("rankviewer_enabled", "1", "Enable or Disable the Rank Viewer Plugin", true, true, 0, true, 1, true);
 
     gameWrapper->RegisterDrawable(std::bind(&RankViewer::Render, this, std::placeholders::_1));
     gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.OnMatchWinnerSet", bind(&RankViewer::StatsScreen, this, std::placeholders::_1));
@@ -273,7 +160,7 @@ void RankViewer::Render(CanvasWrapper canvas)
     }
 
     if (drawCanvas) {
-        
+
         Vector2 screen = canvas.GetSize();
 
         float fontSize = (float)screen.X / (float)1920;
