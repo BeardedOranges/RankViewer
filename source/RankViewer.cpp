@@ -1,10 +1,15 @@
 // Credits: Bakkes: MMR rounding, being a cool guy. CinderBlock: overall big help <3. mega: while not directly, his SessionStats plugin was a really helpful reference. Others: savior, Martinn, Simple_AOB, HalfwayDead.
 
+
+// NOTES FOR PLACEMENTS: Have it display your current mmr, plus say that more will show when you finish placements
+// Other stuff: Have the canvas part check if the user is in online match. Will have to test if stats screen is considered in online match.
+
+
 #include "RankViewer.h"
 #include "bakkesmod/wrappers/MMRWrapper.h"
 #include <string>
 
-BAKKESMOD_PLUGIN(RankViewer, "Rank Viewer", "0.1", 0)
+BAKKESMOD_PLUGIN(RankViewer, "Rank Viewer", "1.2.7", 0)
 
 int colorCurrent[3];
 int colorBefore[3];
@@ -27,7 +32,7 @@ int unranker(int mode, int rank, int div, bool upperLimit) {
     int realRank, realDiv, realHeight;
 
     // Changes the rank to descending 
-    int rankIndex[] = { 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+    int rankIndex[] = {19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
     realRank = rankIndex[rank];
 
     // Since the divisions are descending in the array, we have to flip the index around
@@ -66,10 +71,15 @@ int unranker(int mode, int rank, int div, bool upperLimit) {
     else if (mode == 30) {
         return snowday[realRank][realDiv][realHeight];
     }
-
+    
+    // if it fails:
+    return 0;
 }
 
+// Gets the correct colors for each rank
 void colorNamer(int rank) {
+
+    // Thanks Brank for cleaning this up
     int schemes[20][3] =
     {
         { 133, 133, 133 }, // Unranked | 0
@@ -94,14 +104,23 @@ void colorNamer(int rank) {
         { 244, 56, 236 } // Grand Champion | 19
     };
 
-    colorScheme[0] = schemes[rank][0];
-    colorScheme[1] = schemes[rank][1];
-    colorScheme[2] = schemes[rank][2];
+    if (rank < 0 || rank > 19) {
+        colorScheme[0] = 0;
+        colorScheme[1] = 0;
+        colorScheme[2] = 0;
+    }
+    else {
+        colorScheme[0] = schemes[rank][0];
+        colorScheme[1] = schemes[rank][1];
+        colorScheme[2] = schemes[rank][2];
+    }
 }
 
 string rankNamer(int rank, int div) {
+
     string fullName = "";
 
+    // Thanks Brank for cleaning this up
     string rankNames[] =
     {
         "Unranked",
@@ -134,52 +153,79 @@ string rankNamer(int rank, int div) {
         " Div 4"
     };
 
-    fullName += rankNames[rank];
+    if (rank < 0 || rank > 19) {
+        return "ERROR";
+    }
+    else {
+        fullName += rankNames[rank];
 
-    if (fullName.find("Grand Champion") == string::npos)
-        fullName += divNames[div];
+        // Screw you brank for not helping me
+        if (rank != 0 && rank != 19)
+            fullName += divNames[div];
 
-    return fullName;
+        return fullName;
+    }
 }
 
 void RankViewer::onLoad()
 {
     // Setting for if the plugin is enabled
-    cvarManager->registerCvar("rankviewer_enabled", "1", "Enable or Disable the Rank Viewer Plugin", true, true, 0, true, 1, true);
+	cvarManager->registerCvar("rankviewer_enabled", "1", "Enable or Disable the Rank Viewer Plugin", true, true, 0, true, 1, true);
 
+    // Canvas
     gameWrapper->RegisterDrawable(std::bind(&RankViewer::Render, this, std::placeholders::_1));
+
+    // Called when game ends
     gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.OnMatchWinnerSet", bind(&RankViewer::StatsScreen, this, std::placeholders::_1));
+
+    // Called when you leave the stats screen
     gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.Destroyed", bind(&RankViewer::loadMenu, this, std::placeholders::_1));
 }
 
 void RankViewer::Render(CanvasWrapper canvas)
 {
+    // Only displays if the user has the plugin enableds
     isEnabled = cvarManager->getCvar("rankviewer_enabled").getBoolValue();
     if (!isEnabled) {
         return;
     }
 
-    if (drawCanvas) {
+    // Makes sure you are in the game
+    bool inGame = gameWrapper->IsInOnlineGame();
+    if (!inGame) {
+        drawCanvas = false;
+        return;
+    }
 
+    if (drawCanvas) {
+        
         Vector2 screen = canvas.GetSize();
 
         float fontSize = (float)screen.X / (float)1920;
 
-        // 1-1
-        canvas.SetColor(233, 238, 240, 255);
-        canvas.SetPosition(Vector2{ int(screen.X * .2) , int(screen.Y * .7) });
-        canvas.DrawString("Next: ", 2 * fontSize, 2 * fontSize);
+        if (!isPlacement) {
+            // 1-1
+            canvas.SetColor(233, 238, 240, 255);
+            canvas.SetPosition(Vector2{ int(screen.X * .2) , int(screen.Y * .7) });
+            canvas.DrawString("Next: ", 2 * fontSize, 2 * fontSize);
 
-        // 1-2
-        canvas.SetColor(colorNext[0], colorNext[1], colorNext[2], 255);
-        canvas.SetPosition(Vector2{ int(screen.X * .24) , int(screen.Y * .7) });
-        canvas.DrawString(nameNext + ": ", 2 * fontSize, 2 * fontSize);
+            // 1-2
+            canvas.SetColor(colorNext[0], colorNext[1], colorNext[2], 255);
+            canvas.SetPosition(Vector2{ int(screen.X * .24) , int(screen.Y * .7) });
+            canvas.DrawString(nameNext + ": ", 2 * fontSize, 2 * fontSize);
 
-        // 1-3
-        canvas.SetColor(233, 238, 240, 255);
-        canvas.SetPosition(Vector2{ int(screen.X * .37) , int(screen.Y * .7) });
-        canvas.DrawString(std::to_string(nextLower) + nextDiff, 2 * fontSize, 2 * fontSize);
-
+            // 1-3
+            canvas.SetColor(233, 238, 240, 255);
+            canvas.SetPosition(Vector2{ int(screen.X * .37) , int(screen.Y * .7) });
+            canvas.DrawString(std::to_string(nextLower) + nextDiff, 2 * fontSize, 2 * fontSize);
+        }
+        else {
+            // Placement Warning
+            canvas.SetColor(colorCurrent[0], colorCurrent[1], colorCurrent[2], 255);
+            canvas.SetPosition(Vector2{ int(screen.X * .18) , int(screen.Y * .7) });
+            canvas.DrawString("Finish placements for full functionality!", 2 * fontSize, 2 * fontSize);
+        }
+        
         // 2-1
         canvas.SetColor(233, 238, 240, 255);
         canvas.SetPosition(Vector2{ int(screen.X * .18) , int(screen.Y * .735) });
@@ -195,20 +241,22 @@ void RankViewer::Render(CanvasWrapper canvas)
         canvas.SetPosition(Vector2{ int(screen.X * .37) , int(screen.Y * .735) });
         canvas.DrawString(std::to_string((int)(round(userMMR))), 2 * fontSize, 2 * fontSize);
 
-        // 3-1
-        canvas.SetColor(233, 238, 240, 255);
-        canvas.SetPosition(Vector2{ int(screen.X * .175) , int(screen.Y * .77) });
-        canvas.DrawString("Previous: ", 2 * fontSize, 2 * fontSize);
+        if (!isPlacement) {
+            // 3-1
+            canvas.SetColor(233, 238, 240, 255);
+            canvas.SetPosition(Vector2{ int(screen.X * .175) , int(screen.Y * .77) });
+            canvas.DrawString("Previous: ", 2 * fontSize, 2 * fontSize);
 
-        // 3-2
-        canvas.SetColor(colorBefore[0], colorBefore[1], colorBefore[2], 255);
-        canvas.SetPosition(Vector2{ int(screen.X * .24) , int(screen.Y * .77) });
-        canvas.DrawString(nameBefore + ": ", 2 * fontSize, 2 * fontSize);
+            // 3-2
+            canvas.SetColor(colorBefore[0], colorBefore[1], colorBefore[2], 255);
+            canvas.SetPosition(Vector2{ int(screen.X * .24) , int(screen.Y * .77) });
+            canvas.DrawString(nameBefore + ": ", 2 * fontSize, 2 * fontSize);
 
-        // 3-3
-        canvas.SetColor(233, 238, 240, 255);
-        canvas.SetPosition(Vector2{ int(screen.X * .37) , int(screen.Y * .77) });
-        canvas.DrawString(std::to_string(beforeUpper) + beforeDiff, 2 * fontSize, 2 * fontSize);
+            // 3-3
+            canvas.SetColor(233, 238, 240, 255);
+            canvas.SetPosition(Vector2{ int(screen.X * .37) , int(screen.Y * .77) });
+            canvas.DrawString(std::to_string(beforeUpper) + beforeDiff, 2 * fontSize, 2 * fontSize);
+        }
     }
 }
 
@@ -231,18 +279,13 @@ void RankViewer::StatsScreen(std::string eventName)
     }
 }
 
-void RankViewer::loadMenu(std::string eventName)
-{
-    // Removes canvas if you quit the stats screen
-    drawCanvas = false;
-}
-
 void RankViewer::CheckMMR(int retryCount)
 {
     isEnabled = cvarManager->getCvar("rankviewer_enabled").getBoolValue();
     if (!isEnabled) {
         return;
     }
+
     // The updateMMR section is all from mega's plugin: SessionStats. Please view it here, its great :) https://bakkesplugins.com/plugins/view/39
 
     ServerWrapper sw = gameWrapper->GetOnlineGame();
@@ -262,19 +305,29 @@ void RankViewer::CheckMMR(int retryCount)
                     gotNewMMR = true;
 
                     // This is where my code actually starts lol thanks again mega
-                    MMRWrapper nw = gameWrapper->GetMMRWrapper();
+                    MMRWrapper mw = gameWrapper->GetMMRWrapper();
 
                     // The SkillRank has information about the players rank
-                    SkillRank userRank = nw.GetPlayerRank(mySteamID, userPlaylist);
+                    SkillRank userRank = mw.GetPlayerRank(mySteamID, userPlaylist);
 
                     // Getting the player rank information into seperate variables
                     userDiv = userRank.Division;
                     userTier = userRank.Tier;
-
+                    
                     // Converts the Div and Tier into actual usable names
                     nameCurrent = rankNamer(userTier, userDiv);
                     colorNamer(userTier);
                     memcpy(colorCurrent, colorScheme, sizeof(colorScheme));
+
+                    // Checks if the games are placement matches, so that the Next and Before don't show up
+                    if (userTier <= 0) {
+                        isPlacement = true;
+                        drawCanvas = true;
+                        return;
+                    }
+                    else {
+                        isPlacement = false;
+                    }
 
                     // Finds out what div is above and below you
                     if (userDiv == 0) {
@@ -343,6 +396,12 @@ void RankViewer::CheckMMR(int retryCount)
             }
             }, 3);
     }
+}
+
+void RankViewer::loadMenu(std::string eventName)
+{
+    // Removes canvas if you quit the stats screen
+    drawCanvas = false;
 }
 
 void RankViewer::onUnload()
