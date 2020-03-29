@@ -13,10 +13,10 @@ How you rank up in Rocket League is not exactly known. The MMR's given are just 
 ### Update Log
 - v1.0 - Initial Release  
 - v1.1 - Added support for displays that are not 1080p. The font size now resizes itself based on your display! I also fixed the banner image on this plugin page to have the ranks in order correctly XD.  
+- v1.2 - Fixed a bug where it will stay on screen if you leave the match right after it ends. Cleaned up some code (thanks Brank and CinderBlock). Placement matches now display as they should.
 
-### Coming Soon
-- Have the MMR data automatically pull from the Rocket Tracker website so that it is up to date  
-- Have the font resize be an option to turn off, and also to have a horizontal position slider  
+### Coming Soon  
+- Brand new ui using imgui so that the plugin looks like it was made by Psyonix themselves  
 
 ### Credits
 - **BeardedOranges:** Me, made the plugin  
