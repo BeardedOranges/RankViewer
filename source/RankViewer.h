@@ -1,6 +1,8 @@
 #pragma once
 #pragma comment( lib, "bakkesmod.lib" )
 #include "bakkesmod/plugin/bakkesmodplugin.h"
+#include "RankEnums.h"
+#include "PlaylistData.h"
 
 class RankViewer : public BakkesMod::Plugin::BakkesModPlugin
 {
@@ -13,6 +15,11 @@ private:
 public:
 	virtual void onLoad();
 	virtual void onUnload();
+
+	int unranker(int mode, int rank, int div, bool upperLimit);
+	DivisionData GetDivisionData(Playlist mode, Rank rank, int div);
+	void DebugGetDivisionData(std::vector<std::string> args);
+
 	
 	void Render(CanvasWrapper canvas);
 	void StatsScreen(std::string eventName);
