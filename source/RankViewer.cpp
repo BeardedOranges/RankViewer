@@ -1,8 +1,13 @@
 // Credits: Bakkes: MMR rounding, being a cool guy. CinderBlock: overall big help <3. mega: while not directly, his SessionStats plugin was a really helpful reference. Others: savior, Martinn, Simple_AOB, HalfwayDead.
-
+#include "pch.h"
 #include "RankViewer.h"
 #include "bakkesmod/wrappers/MMRWrapper.h"
 #include <string>
+#include "RankEnums.h"
+#include "PlaylistData.h"
+
+
+
 
 BAKKESMOD_PLUGIN(RankViewer, "Rank Viewer", "1.2", 0)
 
@@ -21,8 +26,9 @@ const int rumble[20][4][2] = { {{1241, 1330}, {-1, -1}, {-1, -1}, {-1, -1}}, {{1
 const int dropshot[20][4][2] = { {{1244, 1298}, {-1, -1}, {-1, -1}, {-1, -1}}, {{1232, 1250}, {1208, 1230}, {1185, 1204}, {1166, 1183}}, {{1152, 1162}, {1128, 1149}, {1105, 1124}, {1094, 1103}}, {{1072, 1080}, {1048, 1070}, {1024, 1047}, {1015, 1023}}, {{992, 1002}, {968, 991}, {944, 967}, {935, 943}}, {{917, 925}, {898, 916}, {879, 897}, {873, 878}}, {{857, 862}, {838, 856}, {819, 837}, {811, 818}}, {{797, 805}, {778, 796}, {759, 777}, {749, 758}}, {{737, 742}, {718, 736}, {699,717}, {692, 698}}, {{677, 682}, {658, 676}, {639, 657}, {630, 638}}, {{617, 621}, {598, 616}, {579, 597}, {573, 578}}, {{557, 562}, {538, 556}, {519, 537}, {512, 518}}, {{497, 502}, {478, 496}, {459, 477}, {454, 458}}, {{437, 443}, {418, 436}, {399, 417}, {385, 398}}, {{377, 388}, {358, 376}, {339, 357}, {323, 338}}, {{317, 329}, {299, 316}, {279, 297}, {268, 278}}, {{257, 272}, {238, 255}, {220, 237}, {203, 218}}, {{-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}} };
 const int snowday[20][4][2] = { {{1241, 1312}, {-1, -1}, {-1, -1}, {-1, -1}}, {{1232, 1240}, {1208, 1227}, {1185, 1205}, {1165, 1183}}, {{1152, 1163}, {1128, 1150}, {1105, 1127}, {1091, 1103}}, {{1072, 1080}, {1048, 1071}, {1024, 1047}, {1015, 1023}}, {{992, 1000}, {968, 991}, {944, 967}, {935, 943}}, {{917, 926}, {898, 916}, {879, 897}, {869, 878}}, {{857, 863}, {838, 856}, {819, 837}, {811, 818}}, {{797, 805}, {778, 796}, {759, 777}, {747, 758}}, {{737, 743}, {718, 736}, {699,717}, {688, 698}}, {{677, 685}, {658, 676}, {639, 657}, {634, 638}}, {{617, 622}, {598, 616}, {579, 597}, {566, 578}}, {{557, 573}, {538, 556}, {519, 537}, {505, 518}}, {{497, 508}, {478, 496}, {459, 477}, {446, 458}}, {{437, 447}, {418, 436}, {400, 417}, {384, 398}}, {{377, 388}, {358, 375}, {341, 357}, {327, 338}}, {{317, 332}, {301, 314}, {282, 297}, {266, 277}}, {{257, 263}, {238, 251}, {219, 235}, {211, 217}}, {{-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}}, {{-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}} };
 
+
 // Converts information into mmr. Format is directly from game (mode is 11-30, rank is 0-19, div is 0-3). Upper limit is to get the upper part of the range, setting it to false gets the lower part of the mmr range.
-int unranker(int mode, int rank, int div, bool upperLimit) {
+int RankViewer::unranker(int mode, int rank, int div, bool upperLimit) {
 
     int realRank, realDiv, realHeight;
 
@@ -34,131 +40,40 @@ int unranker(int mode, int rank, int div, bool upperLimit) {
     int divIndex[] = { 3, 2, 1, 0 };
     realDiv = divIndex[div];
 
-    if (upperLimit) {
-        realHeight = 1;
-    }
-    else {
-        realHeight = 0;
-    }
-
-    // Converts in-game Rocket League number playlist ids to the correct playlist array
-    if (mode == 10) {
-        return ones[realRank][realDiv][realHeight];
-    }
-    else if (mode == 11) {
-        return twos[realRank][realDiv][realHeight];
-    }
-    else if (mode == 13) {
-        return threes[realRank][realDiv][realHeight];
-    }
-    else if (mode == 12) {
-        return solo[realRank][realDiv][realHeight];
-    }
-    else if (mode == 27) {
-        return hoops[realRank][realDiv][realHeight];
-    }
-    else if (mode == 28) {
-        return rumble[realRank][realDiv][realHeight];
-    }
-    else if (mode == 29) {
-        return dropshot[realRank][realDiv][realHeight];
-    }
-    else if (mode == 30) {
-        return snowday[realRank][realDiv][realHeight];
-    }
-    
-    // if it fails:
-    return 0;
+    auto divData = GetDivisionData((Playlist)mode, (Rank)realRank, realDiv);
+    return upperLimit ? divData.higher : divData.lower;
 }
 
 // Gets the correct colors for each rank
-void colorNamer(int rank) {
-
-    // Thanks Brank for cleaning this up
-    int schemes[20][3] =
+void SetRankColor(int rank) {
+    Rank realRank = (Rank)(rank);
+    if (realRank < Rank::Unranked || realRank > Rank::GrandChamp)
     {
-        { 133, 133, 133 }, // Unranked | 0
-        { 227, 151, 68 },  // Bronze 1 | 1
-        { 227, 151, 68}, // Bronze 2 | 2
-        { 227, 151, 68}, // Bronze 3 | 3
-        { 133, 133, 133}, // Silver 1 | 4
-        { 133, 133, 133}, // Silver 2 | 5
-        { 133, 133, 133}, // Silver 3 | 6
-        { 202, 149, 31}, // Gold 1 | 7
-        { 202, 149, 31}, // Gold 2 | 8
-        { 202, 149, 31}, // Gold 3 | 9
-        { 50, 204, 252}, // Platinum 1 | 10
-        { 50, 204, 252}, // Platinum 2 | 11
-        { 50, 204, 252}, // Platinum 3 | 12
-        { 2, 188, 255}, // Diamond 1 | 13
-        { 2, 188, 255}, // Diamond 2 | 14
-        { 2, 188, 255}, // Diamond 3 | 15
-        { 202, 137, 255 }, // Champion 1 | 16
-        { 202, 137, 255 }, // Champion 2 | 17
-        { 202, 137, 255 }, // Champion 3 | 18
-        { 244, 56, 236 } // Grand Champion | 19
-    };
-
-    if (rank < 0 || rank > 19) {
         colorScheme[0] = 0;
         colorScheme[1] = 0;
         colorScheme[2] = 0;
+        
     }
     else {
-        colorScheme[0] = schemes[rank][0];
-        colorScheme[1] = schemes[rank][1];
-        colorScheme[2] = schemes[rank][2];
+        auto color = RankInfoDB[realRank].color;
+        colorScheme[0] = color.r;
+        colorScheme[1] = color.g;
+        colorScheme[2] = color.b;
     }
 }
 
-string rankNamer(int rank, int div) {
-
-    string fullName = "";
-
-    // Thanks Brank for cleaning this up
-    string rankNames[] =
-    {
-        "Unranked",
-        "Bronze 1",
-        "Bronze 2",
-        "Bronze 3",
-        "Silver 1",
-        "Silver 2",
-        "Silver 3",
-        "Gold 1",
-        "Gold 2",
-        "Gold 3",
-        "Platinum 1",
-        "Platinum 2",
-        "Platinum 3",
-        "Diamond 1",
-        "Diamond 2",
-        "Diamond 3",
-        "Champion 1",
-        "Champion 2",
-        "Champion 3",
-        "Grand Champion"
-    };
-
-    string divNames[] =
-    {
-        " Div 1",
-        " Div 2",
-        " Div 3",
-        " Div 4"
-    };
-
+string GetRankName(int rank, int div) {
     if (rank < 0 || rank > 19) {
         return "ERROR";
     }
     else {
-        fullName += rankNames[rank];
-
+        Rank realRank = (Rank)(rank);
+        std::string rankName = RankInfoDB[realRank].name;
         // Screw you brank for not helping me
-        if (rank != 0 && rank != 19)
-            fullName += divNames[div];
+        if (rank != Rank::Unranked && rank != Rank::GrandChamp)
+            rankName += " Div " + to_string(div + 1);
 
-        return fullName;
+        return rankName;
     }
 }
 
@@ -175,6 +90,9 @@ void RankViewer::onLoad()
 
     // Called when you leave the stats screen
     gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.Destroyed", bind(&RankViewer::loadMenu, this, std::placeholders::_1));
+
+    // Debug command
+    cvarManager->registerNotifier("debug_mmr", [this](std::vector<std::string> args) {DebugGetDivisionData(args); }, "testing", PERMISSION_MENU);
 }
 
 void RankViewer::Render(CanvasWrapper canvas)
@@ -310,8 +228,8 @@ void RankViewer::CheckMMR(int retryCount)
                     userTier = userRank.Tier;
                     
                     // Converts the Div and Tier into actual usable names
-                    nameCurrent = rankNamer(userTier, userDiv);
-                    colorNamer(userTier);
+                    nameCurrent = GetRankName(userTier, userDiv);
+                    SetRankColor(userTier);
                     memcpy(colorCurrent, colorScheme, sizeof(colorScheme));
 
                     // Checks if the games are placement matches, so that the Next and Before don't show up
@@ -357,8 +275,8 @@ void RankViewer::CheckMMR(int retryCount)
                         diff = abs(diff);
                         nextDiff = " (- " + std::to_string(diff) + ")";
                     }
-                    nameNext = rankNamer(upperTier, upperDiv);
-                    colorNamer(upperTier);
+                    nameNext = GetRankName(upperTier, upperDiv);
+                    SetRankColor(upperTier);
                     memcpy(colorNext, colorScheme, sizeof(colorScheme));
 
                     beforeUpper = unranker(userPlaylist, lowerTier, lowerDiv, true);
@@ -371,8 +289,8 @@ void RankViewer::CheckMMR(int retryCount)
                         diff = abs(diff);
                         beforeDiff = " (+ " + std::to_string(diff) + ")";
                     }
-                    nameBefore = rankNamer(lowerTier, lowerDiv);
-                    colorNamer(lowerTier);
+                    nameBefore = GetRankName(lowerTier, lowerDiv);
+                    SetRankColor(lowerTier);
                     memcpy(colorBefore, colorScheme, sizeof(colorScheme));
 
                     // Some mmr stats are unknown, so if that happens it will just display nothing
@@ -403,4 +321,40 @@ void RankViewer::onUnload()
 {
     gameWrapper->UnhookEvent("Function TAGame.GameEvent_Soccar_TA.EventMatchEnded");
     gameWrapper->UnregisterDrawables();
+}
+
+DivisionData RankViewer::GetDivisionData(Playlist mode, Rank rank, int div)
+{
+    auto playlistSearch = playlistMMRDatabase.find(mode);
+    if (playlistSearch != playlistMMRDatabase.end())
+    {
+        auto playlist = playlistSearch->second;
+        if (playlist.tiers.size() > rank)
+        {
+            auto tier = playlist.tiers[rank];
+            if (tier.divisions.size() > div)
+            {
+                return tier.divisions[div];
+            }
+        }
+    }
+    return DivisionData();
+}
+
+#include "utils/parser.h"
+
+void RankViewer::DebugGetDivisionData(std::vector<std::string> args)
+{
+    if (args.size() != 4)
+    {
+        cvarManager->log("Usage:" + args[0] + " mode rank div");
+        return;
+    }
+
+    Playlist mode =  (Playlist) get_safe_int(args[1]);
+    Rank rank = (Rank) get_safe_int(args[2]);
+    int div = get_safe_int(args[3]);
+
+    auto divData = GetDivisionData(mode, rank, div);
+    cvarManager->log("Lower:" + to_string(divData.lower) + " Higher: " + to_string(divData.higher));
 }
