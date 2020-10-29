@@ -61,7 +61,7 @@ void SetRankColor(int rank) {
     }
 }
 
-string GetRankName(int rank, int div) {
+std::string GetRankName(int rank, int div) {
     if (rank < 0 || rank > 22) {
         return "ERROR";
     }
@@ -70,7 +70,7 @@ string GetRankName(int rank, int div) {
         std::string rankName = RankInfoDB[realRank].name;
         // Screw you brank for not helping me
         if (rank != Rank::Unranked && rank != Rank::SupersonicLegend)
-            rankName += " Div " + to_string(div + 1);
+            rankName += " Div " + std::to_string(div + 1);
 
         return rankName;
     }
@@ -355,5 +355,5 @@ void RankViewer::DebugGetDivisionData(std::vector<std::string> args)
     int div = get_safe_int(args[3]);
 
     auto divData = GetDivisionData(mode, rank, div);
-    cvarManager->log("Lower:" + to_string(divData.lower) + " Higher: " + to_string(divData.higher));
+    cvarManager->log("Lower:" + std::to_string(divData.lower) + " Higher: " + std::to_string(divData.higher));
 }

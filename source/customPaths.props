@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets" />
-  <PropertyGroup Label="UserMacros">
-    <BAKKESMOD>C:\Program Files (x86)\Steam\steamapps\common\rocketleague\Binaries\Win64\bakkesmod</BAKKESMOD>
-  </PropertyGroup>
-  <PropertyGroup />
-  <ItemDefinitionGroup>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-    <PostBuildEvent>
-      <Command>C:\Users\m4rti\Miniconda3\python.exe "$(BAKKESMOD)\bakkesmodsdk\bakkes_patchplugin.py" "$(TargetPath)"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <BuildMacro Include="BAKKESMOD">
-      <Value>$(BAKKESMOD)</Value>
-    </BuildMacro>
-  </ItemGroup>
+<Project DefaultTargets="ShowBakkesInfo" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ImportGroup Label="PropertySheets" />
+	<PropertyGroup Label="UserMacros">
+		<BakkesModPath>$(registry:HKEY_CURRENT_USER\Software\BakkesMod\AppPath@BakkesModPath)</BakkesModPath>
+	</PropertyGroup>
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<AdditionalIncludeDirectories>$(BakkesModPath)\bakkesmodsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+		</ClCompile>
+		<Link>
+			<AdditionalLibraryDirectories>$(BakkesModPath)\bakkesmodsdk\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+			<AdditionalDependencies>pluginsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+		</Link>
+		<PostBuildEvent>
+			<Command> "$(BakkesModPath)\bakkesmodsdk\bakkesmod-patch.exe" "$(TargetPath)"</Command>
+		</PostBuildEvent>
+	</ItemDefinitionGroup>
+	<ItemGroup />
+	<Target Name="ShowBakkesInfo" BeforeTargets="PrepareForBuild">
+		<Message Text="Using bakkes found at $(BakkesModPath)" Importance="normal" />
+	</Target>
 </Project>

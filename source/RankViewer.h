@@ -12,7 +12,7 @@ private:
 	bool drawCanvas, isEnabled, gotNewMMR, isPlacement;
 	int userPlaylist, userDiv, userTier, upperTier, lowerTier, upperDiv, lowerDiv, nextLower, beforeUpper;
 	float userMMR;
-	string nameCurrent, nameNext, nameBefore, nextDiff, beforeDiff;
+	std::string nameCurrent, nameNext, nameBefore, nextDiff, beforeDiff;
 public:
 	virtual void onLoad();
 	virtual void onUnload();
