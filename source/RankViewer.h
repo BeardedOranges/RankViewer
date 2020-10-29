@@ -3,6 +3,7 @@
 #include "bakkesmod/plugin/bakkesmodplugin.h"
 #include "RankEnums.h"
 #include "PlaylistData.h"
+#include <string>
 
 class RankViewer : public BakkesMod::Plugin::BakkesModPlugin
 {

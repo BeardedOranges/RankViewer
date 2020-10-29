@@ -22,7 +22,7 @@ PlaylistData Ones =
     {{ {437, 453}, {418, 436}, {399, 417}, {384, 398} }},
     {{ {377, 394}, {358, 376}, {339, 357}, {321, 338} }},
     {{ {317, 327}, {298, 316}, {279, 297}, {265, 278} }},
-    {{ {257, 275}, {238, 256}, {220, 237}, {202, 218 }},
+    {{ {257, 275}, {238, 256}, {220, 237}, {202, 218} }},
     {{ {197, 207}, {179, 196}, {162, 174}, {153, 154} }},
     {{ {142, 153}, {132, 139}, {117, 127}, {0, 113} }},
     {{ {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1} }}
@@ -224,7 +224,7 @@ std::map<Playlist, PlaylistData&> playlistMMRDatabase = {
     {Playlist::HOOPS, Hoops},
     {Playlist::RUMBLE, Rumble},
     {Playlist::DROPSHOT, Dropshot},
-    {Playlist::SNOWDAY, Snowday}
+    {Playlist::SNOWDAY, Snowday},
     {Playlist::TOURNAMENT, Tournament}
 };
 
@@ -251,8 +251,8 @@ std::map<Rank, RankInfo> RankInfoDB
     { Rank::Champ1           ,{{ 202, 137, 255 }, "Champion 1",}},
     { Rank::Champ2           ,{{ 202, 137, 255 }, "Champion 2",}},
     { Rank::Champ3           ,{{ 202, 137, 255 }, "Champion 3",}},
-    { Rank::GrandChamp1      ,{{ 244, 47, 48   }, "Grand Champion 1"}}
-    { Rank::GrandChamp2      ,{{ 244, 47, 48   }, "Grand Champion 2"}}
-    { Rank::GrandChamp3      ,{{ 244, 47, 48   }, "Grand Champion 3"}}
+    { Rank::GrandChamp1      ,{{ 244, 47, 48   }, "Grand Champion 1",}},
+    { Rank::GrandChamp2      ,{{ 244, 47, 48   }, "Grand Champion 2",}},
+    { Rank::GrandChamp3      ,{{ 244, 47, 48   }, "Grand Champion 3",}},
     { Rank::SupersonicLegend ,{{ 240, 240, 240 }, "Supersonic Legend"}}
 };
