@@ -180,8 +180,7 @@ void RankViewer::StatsScreen(std::string eventName)
     }
 
     MMRWrapper mw = gameWrapper->GetMMRWrapper();
-
-    mySteamID.ID = gameWrapper->GetSteamID();
+    uniqueID = gameWrapper->GetUniqueID();
     userPlaylist = mw.GetCurrentPlaylist();
 
     if (mw.IsRanked(userPlaylist)) {
@@ -212,15 +211,15 @@ void RankViewer::CheckMMR(int retryCount)
         gameWrapper->SetTimeout([retryCount, this](GameWrapper* gameWrapper) {
             gotNewMMR = false;
             while (!gotNewMMR) {
-                if (1 || (gameWrapper->GetMMRWrapper().IsSynced(mySteamID, userPlaylist) && !gameWrapper->GetMMRWrapper().IsSyncing(mySteamID))) {
-                    userMMR = gameWrapper->GetMMRWrapper().GetPlayerMMR(mySteamID, userPlaylist);
+                if (gameWrapper->GetMMRWrapper().IsSynced(uniqueID, userPlaylist) && !gameWrapper->GetMMRWrapper().IsSyncing(uniqueID)) {
+                    userMMR = gameWrapper->GetMMRWrapper().GetPlayerMMR(uniqueID, userPlaylist);
                     gotNewMMR = true;
 
                     // This is where my code actually starts lol thanks again mega
                     MMRWrapper mw = gameWrapper->GetMMRWrapper();
 
                     // The SkillRank has information about the players rank
-                    SkillRank userRank = mw.GetPlayerRank(mySteamID, userPlaylist);
+                    SkillRank userRank = mw.GetPlayerRank(uniqueID, userPlaylist);
 
                     // Getting the player rank information into seperate variables
                     userDiv = userRank.Division;

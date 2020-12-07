@@ -8,7 +8,7 @@
 class RankViewer : public BakkesMod::Plugin::BakkesModPlugin
 {
 private:
-	SteamID mySteamID;
+	UniqueIDWrapper uniqueID;
 	bool drawCanvas, isEnabled, gotNewMMR, isPlacement;
 	int userPlaylist, userDiv, userTier, upperTier, lowerTier, upperDiv, lowerDiv, nextLower, beforeUpper;
 	float userMMR;
