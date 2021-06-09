@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
 #include "RankEnums.h"
-
+/*
 struct DivisionData
 {
 	int lower;
@@ -16,11 +16,15 @@ struct TierData
 struct  PlaylistData
 {
 	std::vector<TierData> tiers;
+};*/
+
+struct FName2
+{
+	int32_t Index;
+	int32_t Instance;
 };
 
-struct Color { int r, g, b; };
+struct RankInfo { std::string name; };
 
-struct RankInfo { Color color; std::string name; };
-
-extern std::map<Playlist, PlaylistData&> playlistMMRDatabase;
+//extern std::map<Playlists, PlaylistData&> playlistMMRDatabase;
 extern std::map<Rank, RankInfo> RankInfoDB;

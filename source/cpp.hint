@@ -1,0 +1,4 @@
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define BAKKESMOD_PLUGIN(classType, pluginName, pluginVersion, pluginType) static std::shared_ptr<classType> singleton; extern "C" { BAKKESMOD_PLUGIN_EXPORT uintptr_t getPlugin() { if(!singleton) { singleton = std::shared_ptr<classType>(new classType()); } return reinterpret_cast<std::uintptr_t>(&singleton); } BAKKESMOD_PLUGIN_EXPORT void deleteMe() { if(singleton) singleton = nullptr; } BAKKESMOD_PLUGIN_EXPORT BakkesMod::Plugin::PluginInfo exports = { BAKKESMOD_STANDARD_PLUGIN_STUFF, #classType, pluginName, pluginVersion, pluginType, getPlugin, deleteMe }; }

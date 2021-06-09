@@ -1,0 +1,820 @@
+{
+  "data": {
+    "tiers": [ "Unranked", "Bronze I", "Bronze II", "Bronze III", "Silver I", "Silver II", "Silver III", "Gold I", "Gold II", "Gold III", "Platinum I", "Platinum II", "Platinum III", "Diamond I", "Diamond II", "Diamond III", "Champion I", "Champion II", "Champion III", "Grand Champion I", "Grand Champion II", "Grand Champion III", "Supersonic Legend" ],
+    "divisions": [ "Division I", "Division II", "Division III", "Division IV" ],
+    "playlists": [
+      {
+        "key": 0,
+        "value": "Un-Ranked"
+      },
+      {
+        "key": 10,
+        "value": "Ranked Duel 1v1"
+      },
+      {
+        "key": 11,
+        "value": "Ranked Doubles 2v2"
+      },
+      {
+        "key": 13,
+        "value": "Ranked Standard 3v3"
+      },
+      {
+        "key": 27,
+        "value": "Hoops"
+      },
+      {
+        "key": 28,
+        "value": "Rumble"
+      },
+      {
+        "key": 29,
+        "value": "Dropshot"
+      },
+      {
+        "key": 30,
+        "value": "Snowday"
+      },
+      {
+        "key": 34,
+        "value": "Tournament Matches"
+      }
+    ],
+    "data": [
+      {
+        "id": 0,
+        "tier": 0,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 0,
+        "maxMMR": 118
+      },
+      {
+        "id": 1,
+        "tier": 1,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 0,
+        "maxMMR": 118
+      },
+      {
+        "id": 2,
+        "tier": 1,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 120,
+        "maxMMR": 135
+      },
+      {
+        "id": 3,
+        "tier": 1,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 138,
+        "maxMMR": 156
+      },
+      {
+        "id": 4,
+        "tier": 1,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 157,
+        "maxMMR": 160
+      },
+      {
+        "id": 5,
+        "tier": 2,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 161,
+        "maxMMR": 177
+      },
+      {
+        "id": 6,
+        "tier": 2,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 179,
+        "maxMMR": 197
+      },
+      {
+        "id": 7,
+        "tier": 2,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 198,
+        "maxMMR": 216
+      },
+      {
+        "id": 8,
+        "tier": 2,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 217,
+        "maxMMR": 220
+      },
+      {
+        "id": 9,
+        "tier": 3,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 221,
+        "maxMMR": 238
+      },
+      {
+        "id": 10,
+        "tier": 3,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 238,
+        "maxMMR": 257
+      },
+      {
+        "id": 11,
+        "tier": 3,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 258,
+        "maxMMR": 276
+      },
+      {
+        "id": 12,
+        "tier": 3,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 276,
+        "maxMMR": 280
+      },
+      {
+        "id": 13,
+        "tier": 4,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 280,
+        "maxMMR": 298
+      },
+      {
+        "id": 14,
+        "tier": 4,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 298,
+        "maxMMR": 317
+      },
+      {
+        "id": 15,
+        "tier": 4,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 317,
+        "maxMMR": 336
+      },
+      {
+        "id": 16,
+        "tier": 4,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 336,
+        "maxMMR": 340
+      },
+      {
+        "id": 17,
+        "tier": 5,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 340,
+        "maxMMR": 358
+      },
+      {
+        "id": 18,
+        "tier": 5,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 357,
+        "maxMMR": 377
+      },
+      {
+        "id": 19,
+        "tier": 5,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 377,
+        "maxMMR": 396
+      },
+      {
+        "id": 20,
+        "tier": 5,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 396,
+        "maxMMR": 400
+      },
+      {
+        "id": 21,
+        "tier": 6,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 400,
+        "maxMMR": 418
+      },
+      {
+        "id": 22,
+        "tier": 6,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 417,
+        "maxMMR": 437
+      },
+      {
+        "id": 23,
+        "tier": 6,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 436,
+        "maxMMR": 456
+      },
+      {
+        "id": 24,
+        "tier": 6,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 456,
+        "maxMMR": 462
+      },
+      {
+        "id": 25,
+        "tier": 7,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 460,
+        "maxMMR": 478
+      },
+      {
+        "id": 26,
+        "tier": 7,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 477,
+        "maxMMR": 497
+      },
+      {
+        "id": 27,
+        "tier": 7,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 497,
+        "maxMMR": 516
+      },
+      {
+        "id": 28,
+        "tier": 7,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 516,
+        "maxMMR": 524
+      },
+      {
+        "id": 29,
+        "tier": 8,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 520,
+        "maxMMR": 538
+      },
+      {
+        "id": 30,
+        "tier": 8,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 537,
+        "maxMMR": 557
+      },
+      {
+        "id": 31,
+        "tier": 8,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 556,
+        "maxMMR": 576
+      },
+      {
+        "id": 32,
+        "tier": 8,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 576,
+        "maxMMR": 585
+      },
+      {
+        "id": 33,
+        "tier": 9,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 580,
+        "maxMMR": 598
+      },
+      {
+        "id": 34,
+        "tier": 9,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 597,
+        "maxMMR": 617
+      },
+      {
+        "id": 35,
+        "tier": 9,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 616,
+        "maxMMR": 636
+      },
+      {
+        "id": 36,
+        "tier": 9,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 636,
+        "maxMMR": 654
+      },
+      {
+        "id": 37,
+        "tier": 10,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 640,
+        "maxMMR": 658
+      },
+      {
+        "id": 38,
+        "tier": 10,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 657,
+        "maxMMR": 677
+      },
+      {
+        "id": 39,
+        "tier": 10,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 676,
+        "maxMMR": 696
+      },
+      {
+        "id": 40,
+        "tier": 10,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 696,
+        "maxMMR": 714
+      },
+      {
+        "id": 41,
+        "tier": 11,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 700,
+        "maxMMR": 718
+      },
+      {
+        "id": 42,
+        "tier": 11,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 717,
+        "maxMMR": 737
+      },
+      {
+        "id": 43,
+        "tier": 11,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 736,
+        "maxMMR": 756
+      },
+      {
+        "id": 44,
+        "tier": 11,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 756,
+        "maxMMR": 774
+      },
+      {
+        "id": 45,
+        "tier": 12,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 760,
+        "maxMMR": 778
+      },
+      {
+        "id": 46,
+        "tier": 12,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 776,
+        "maxMMR": 797
+      },
+      {
+        "id": 47,
+        "tier": 12,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 796,
+        "maxMMR": 816
+      },
+      {
+        "id": 48,
+        "tier": 12,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 816,
+        "maxMMR": 835
+      },
+      {
+        "id": 49,
+        "tier": 13,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 820,
+        "maxMMR": 844
+      },
+      {
+        "id": 50,
+        "tier": 13,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 844,
+        "maxMMR": 867
+      },
+      {
+        "id": 51,
+        "tier": 13,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 868,
+        "maxMMR": 891
+      },
+      {
+        "id": 52,
+        "tier": 13,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 891,
+        "maxMMR": 914
+      },
+      {
+        "id": 53,
+        "tier": 14,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 900,
+        "maxMMR": 924
+      },
+      {
+        "id": 54,
+        "tier": 14,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 924,
+        "maxMMR": 947
+      },
+      {
+        "id": 55,
+        "tier": 14,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 948,
+        "maxMMR": 971
+      },
+      {
+        "id": 56,
+        "tier": 14,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 971,
+        "maxMMR": 994
+      },
+      {
+        "id": 57,
+        "tier": 15,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 980,
+        "maxMMR": 1004
+      },
+      {
+        "id": 58,
+        "tier": 15,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 1004,
+        "maxMMR": 1027
+      },
+      {
+        "id": 59,
+        "tier": 15,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 1028,
+        "maxMMR": 1051
+      },
+      {
+        "id": 60,
+        "tier": 15,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 1051,
+        "maxMMR": 1074
+      },
+      {
+        "id": 61,
+        "tier": 16,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 1060,
+        "maxMMR": 1093
+      },
+      {
+        "id": 62,
+        "tier": 16,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 1094,
+        "maxMMR": 1127
+      },
+      {
+        "id": 63,
+        "tier": 16,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 1128,
+        "maxMMR": 1161
+      },
+      {
+        "id": 64,
+        "tier": 16,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 1161,
+        "maxMMR": 1187
+      },
+      {
+        "id": 65,
+        "tier": 17,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 1180,
+        "maxMMR": 1214
+      },
+      {
+        "id": 66,
+        "tier": 17,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 1214,
+        "maxMMR": 1247
+      },
+      {
+        "id": 67,
+        "tier": 17,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 1248,
+        "maxMMR": 1281
+      },
+      {
+        "id": 68,
+        "tier": 17,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 1281,
+        "maxMMR": 1300
+      },
+      {
+        "id": 69,
+        "tier": 18,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 1300,
+        "maxMMR": 1333
+      },
+      {
+        "id": 70,
+        "tier": 18,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 1334,
+        "maxMMR": 1367
+      },
+      {
+        "id": 71,
+        "tier": 18,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 1368,
+        "maxMMR": 1401
+      },
+      {
+        "id": 72,
+        "tier": 18,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 1401,
+        "maxMMR": 1420
+      },
+      {
+        "id": 73,
+        "tier": 19,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 1420,
+        "maxMMR": 1458
+      },
+      {
+        "id": 74,
+        "tier": 19,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 1459,
+        "maxMMR": 1497
+      },
+      {
+        "id": 75,
+        "tier": 19,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 1498,
+        "maxMMR": 1536
+      },
+      {
+        "id": 76,
+        "tier": 19,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 1537,
+        "maxMMR": 1560
+      },
+      {
+        "id": 77,
+        "tier": 20,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 1560,
+        "maxMMR": 1598
+      },
+      {
+        "id": 78,
+        "tier": 20,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 1599,
+        "maxMMR": 1637
+      },
+      {
+        "id": 79,
+        "tier": 20,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 1638,
+        "maxMMR": 1676
+      },
+      {
+        "id": 80,
+        "tier": 20,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 1677,
+        "maxMMR": 1700
+      },
+      {
+        "id": 81,
+        "tier": 21,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 1701,
+        "maxMMR": 1743
+      },
+      {
+        "id": 82,
+        "tier": 21,
+        "playlist": 34,
+        "players": 0,
+        "division": 1,
+        "minMMR": 1744,
+        "maxMMR": 1787
+      },
+      {
+        "id": 83,
+        "tier": 21,
+        "playlist": 34,
+        "players": 0,
+        "division": 2,
+        "minMMR": 1788,
+        "maxMMR": 1829
+      },
+      {
+        "id": 84,
+        "tier": 21,
+        "playlist": 34,
+        "players": 0,
+        "division": 3,
+        "minMMR": 1832,
+        "maxMMR": 1860
+      },
+      {
+        "id": 85,
+        "tier": 22,
+        "playlist": 34,
+        "players": 0,
+        "division": 0,
+        "minMMR": 1861,
+        "maxMMR": 2033
+      }
+    ]
+  }
+}
