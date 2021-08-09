@@ -10,7 +10,7 @@
 using json = nlohmann::json;
 
 
-BAKKESMOD_PLUGIN(RankViewer, "Rank Viewer", "2.0", 0)
+BAKKESMOD_PLUGIN(RankViewer, "Rank Viewer", "2.1", 0)
 
 
 // Converts information into mmr. Format is directly from game (mode is 11-30, rank is 0-22, div is 0-3). Upper limit is to get the upper part of the range, setting it to false gets the lower part of the mmr range.
@@ -555,23 +555,26 @@ void RankViewer::CheckMMR(int retryCount)
             gotNewMMR = false;
             while (!gotNewMMR) {
                 if (1 || (gameWrapper->GetMMRWrapper().IsSynced(uniqueID, userPlaylist) && !gameWrapper->GetMMRWrapper().IsSyncing(uniqueID))) {
+                    
+                    // Makes sure it is one of the ranked gamemodes to prevent crashes
+                    if (!(find(begin(rankedPlaylists), end(rankedPlaylists), userPlaylist) != end(rankedPlaylists))) {
+                        return;
+                    }
+                    
                     userMMR = gameWrapper->GetMMRWrapper().GetPlayerMMR(uniqueID, userPlaylist);
                     gotNewMMR = true;
 
-                    // This is where my code actually starts lol thanks again mega
                     MMRWrapper mw = gameWrapper->GetMMRWrapper();
 
                     // The SkillRank has information about the players rank
                     SkillRank userRank = mw.GetPlayerRank(uniqueID, userPlaylist);
 
-                    // Getting the player rank information into seperate variables
+                    // Getting the player rank information into separate variables
                     userDiv = userRank.Division;
                     userTier = userRank.Tier;
                     
                     // Converts the Div and Tier into actual usable names
                     nameCurrent = GetRankName(userTier, userDiv);
-                    //SetRankColor(userTier);
-                    //memcpy(colorCurrent, colorScheme, sizeof(colorScheme));
 
                     string fileName;
 
@@ -579,7 +582,6 @@ void RankViewer::CheckMMR(int retryCount)
                     const auto currentPath = gameWrapper->GetDataFolder() / "RankViewer" / "RankIcons" / fileName;
                     currentRank = std::make_shared<ImageWrapper>(currentPath, false, true);
 
-                    //cvarManager->log(currentPath.c_str());
 
                     if (userTier <= 0) {
                         isPlacement = true;
@@ -686,6 +688,9 @@ void RankViewer::loadMenu(std::string eventName)
 // Brank love you <3 this all him
 void RankViewer::friendScreen(ActorWrapper caller, void* params, const std::string& functionName)
 {
+    // Temporarily disabling this feature until i get it working better
+
+    /*
     if (params) 
     {
         FName2* menuName = reinterpret_cast<FName2*>(params);
@@ -698,14 +703,14 @@ void RankViewer::friendScreen(ActorWrapper caller, void* params, const std::stri
                 isFriendOpen = true;
             }
 
-            cvarManager->log(to_string(isFriendOpen));
+            //cvarManager->log(to_string(isFriendOpen));
         }
         else if (menuName->Index == friendsClose.Index) {
             isFriendOpen = false;
-            cvarManager->log(to_string(isFriendOpen));
+            //cvarManager->log(to_string(isFriendOpen));
         }
     }
-
+    */
     
 }
 

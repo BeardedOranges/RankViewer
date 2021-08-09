@@ -63,4 +63,14 @@ public:
 	void loadMenu(std::string eventName);
 	void friendScreen(ActorWrapper caller, void* params, const std::string& functionName);
 	void CheckMMR(int retryCount);
+
+	int rankedPlaylists[8] = { 10, // Ones
+					11, // Twos
+					13, // Threes
+					27, // Hoops
+					28, // Rumble
+					29, // Dropshot
+					30, // Snowday
+					34 // Psynoix Tournaments
+	};
 };

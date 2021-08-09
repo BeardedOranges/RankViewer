@@ -1,17 +1,7 @@
 #pragma once
 
-/*
-enum Playlists
-{
-	ONES		= 10,
-	TWOS		= 11,
-	THREES		= 13,
-	HOOPS		= 27,
-	RUMBLE		= 28,
-	DROPSHOT	= 29,
-	SNOWDAY		= 30
-};
-*/
+
+
 
 enum Rank
 {
