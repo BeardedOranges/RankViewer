@@ -93,7 +93,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Desktop\stb_image.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imguivariouscontrols.h" />
@@ -108,8 +107,6 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="PlaylistData.h" />
-    <ClInclude Include="RankEnums.h" />
     <ClInclude Include="RankViewer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -125,7 +122,6 @@
     <ClCompile Include="imgui\imgui_timeline.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="PlaylistData.cpp" />
     <ClCompile Include="RankViewer.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -1,24 +1,25 @@
-// Credits: Bakkes: MMR rounding, being a cool guy. CinderBlock: overall big help <3. mega: while not directly, his SessionStats plugin was a really helpful reference. Others: savior, Martinn, Simple_AOB, HalfwayDead.
+// Credits: Bakkes: MMR rounding, being a cool guy. CinderBlock: overall big help <3. mega: ] his SessionStats plugin was a really helpful reference. Others: savior, Martinn, Simple_AOB, HalfwayDead.
 // New Credits: Martin for the clean-up, thanks so much! I know it was a mess before, I suck at coding :D
+// New New Credits: I don't even know anymore so many people have helped, love this community everyone is so helpful <3
+
 #include "pch.h"
 #include "RankViewer.h"
 #include "bakkesmod/wrappers/MMRWrapper.h"
 #include "bakkesmod/wrappers/GuiManagerWrapper.h"
 #include "utils/parser.h"
-
 #include <nlohmann/json.hpp>
+
 using json = nlohmann::json;
 
-
-BAKKESMOD_PLUGIN(RankViewer, "Rank Viewer", "2.1", 0)
+BAKKESMOD_PLUGIN(RankViewer, "Rank Viewer", "2.1.1", 0)
 
 
 // Converts information into mmr. Format is directly from game (mode is 11-30, rank is 0-22, div is 0-3). Upper limit is to get the upper part of the range, setting it to false gets the lower part of the mmr range.
 int RankViewer::unranker(int mode, int rank, int div, bool upperLimit) {
 
-
     string fileName = std::to_string(mode) + ".json";
     
+    // Gets the correct json from the folder
     const auto rankJSON = gameWrapper->GetDataFolder() / "RankViewer" / "RankNumbers" / fileName;
     
     string limit;
@@ -30,10 +31,17 @@ int RankViewer::unranker(int mode, int rank, int div, bool upperLimit) {
         limit = "minMMR";
     }
 
+    // Stores the json
     std::ifstream file(rankJSON);
     json j = json::parse(file);
 
+    
+    // Gets the correct mmr number
+    return j["data"]["data"][((rank - 1) * 4) + (div + 1)][limit];
+
     /*
+    // This was an old attempt to fix the jsons. They currently have an issue where if there is missing spots in the database, it crashes. So for the few spots I have to manually add numbers to the json which is a pain
+    // Below here also crashed the game, but leaving it here in case I want another attempt at fixing it
     int mmrNum = -1;
 
     for (int id = 0; id <= j["data"]["data"].size(); id++) {
@@ -41,48 +49,14 @@ int RankViewer::unranker(int mode, int rank, int div, bool upperLimit) {
             mmrNum = j["data"]["data"][id][limit];
         }
     }
-    
 
     return mmrNum; // return here
-    */
-
-    return j["data"]["data"][((rank - 1) * 4) + (div + 1)][limit];
-    /*
-    int realRank, realDiv;
-
-    // Changes the rank to descending 
-    int rankIndex[] = {22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
-    realRank = rankIndex[rank];
-
-    // Since the divisions are descending in the array, we have to flip the index around
-    int divIndex[] = { 3, 2, 1, 0 };
-    realDiv = divIndex[div];
-
-    auto divData = GetDivisionData((Playlists)mode, (Rank)realRank, realDiv);
-    return upperLimit ? divData.higher : divData.lower;
     */
 }
 
 
-//// Gets the correct colors for each rank
-//void SetRankColor(int rank) {
-//    Rank realRank = (Rank)(rank);
-//    if (realRank < Rank::Unranked || realRank > Rank::GrandChamp)
-//    {
-//        colorScheme[0] = 0;
-//        colorScheme[1] = 0;
-//        colorScheme[2] = 0;
-//        
-//    }
-//    else {
-//        auto color = RankInfoDB[realRank].color;
-//        colorScheme[0] = color.r;
-//        colorScheme[1] = color.g;
-//        colorScheme[2] = color.b;
-//    }
-//}
-
-string GetRankName(int rank, int div) {
+// Converts rank and div into the usable string that displays on the screen
+string GetDivName(int rank, int div) {
     if (rank < 0 || rank > 22) {
         return "ERROR";
     }
@@ -115,10 +89,11 @@ string GetRankName(int rank, int div) {
     }*/
 }
 
+
+// Called when loaded in
 void RankViewer::onLoad()
 {
-
-
+    // I didn't write this part, no idea how it works. It's for grabbing the mmr from the game
     gameWrapper->SetTimeout([this](GameWrapper* gameWrapper) {
         cvarManager->executeCommand("togglemenu " + GetMenuName());
         }, 1);
@@ -126,23 +101,18 @@ void RankViewer::onLoad()
     // Setting for if the plugin is enabled
 	cvarManager->registerCvar("rankviewer_enabled", "1", "Enable or Disable the Rank Viewer Plugin", true, true, 0, true, 1, true);
 
-    // Canvas for screen size
-    //gameWrapper->RegisterDrawable(std::bind(&RankViewer::RenderCanvas, this, std::placeholders::_1));
-
     // Called when game ends
     gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.OnMatchWinnerSet", bind(&RankViewer::StatsScreen, this, std::placeholders::_1));
 
     // Called when you leave the stats screen
     gameWrapper->HookEvent("Function TAGame.GameEvent_Soccar_TA.Destroyed", bind(&RankViewer::loadMenu, this, std::placeholders::_1));
 
-    friendsOpen.Index = gameWrapper->GetFNameIndexByString("friendsButton");
-    friendsClose.Index = gameWrapper->GetFNameIndexByString("closeButton");
     // Called when you open the friend tab
     gameWrapper->HookEventWithCaller<ActorWrapper>("Function TAGame.GFxData_MenuStack_TA.ButtonTriggered", bind(&RankViewer::friendScreen, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    friendsOpen.Index = gameWrapper->GetFNameIndexByString("friendsButton");
+    friendsClose.Index = gameWrapper->GetFNameIndexByString("closeButton");
 
-    // Debug command
-    //cvarManager->registerNotifier("debug_mmr", [this](std::vector<std::string> args) {DebugGetDivisionData(args); }, "testing", PERMISSION_MENU);
-
+    // Puts in the unranked icon as a placeholder for the three images in case something goes wrong later on
     auto testPath = gameWrapper->GetDataFolder() / "RankViewer" / "RankIcons" / "0.png";
     currentRank = std::make_shared<ImageWrapper>(testPath, false, true);
 
@@ -152,15 +122,174 @@ void RankViewer::onLoad()
     testPath = gameWrapper->GetDataFolder() / "RankViewer" / "RankIcons" / "0.png";
     beforeRank = std::make_shared<ImageWrapper>(testPath, false, true);
 
+    // Screen resolution
     screenSize = gameWrapper->GetScreenSize();
     //safeZone = gameWrapper->GetSafeZoneRatio();
     //uiScale = gameWrapper->GetUIScale();
 }
 
 
+// Called when unloading
+void RankViewer::onUnload()
+{
+    gameWrapper->UnhookEvent("Function TAGame.GameEvent_Soccar_TA.OnMatchWinnerSet");
+    gameWrapper->UnhookEvent("Function TAGame.GameEvent_Soccar_TA.Destroyed");
+    gameWrapper->UnhookEvent("Function TAGame.GFxData_MenuStack_TA.ButtonTriggered");
+    gameWrapper->UnregisterDrawables();
+}
+
+// Gets mmr and rank information for displaying
+void RankViewer::CheckMMR(int retryCount)
+{
+    isEnabled = cvarManager->getCvar("rankviewer_enabled").getBoolValue();
+    if (!isEnabled) {
+        return;
+    }
+
+    // The updateMMR section is all from mega's plugin: SessionStats. Please view it here, its great :) https://bakkesplugins.com/plugins/view/39
+
+    ServerWrapper sw = gameWrapper->GetOnlineGame();
+
+    if (sw.IsNull() || !sw.IsOnlineMultiplayer() || gameWrapper->IsInReplay())
+        return;
+
+    if (retryCount > 20 || retryCount < 0)
+        return;
+
+    if (userPlaylist != 0) {
+        gameWrapper->SetTimeout([retryCount, this](GameWrapper* gameWrapper) {
+            gotNewMMR = false;
+            while (!gotNewMMR) {
+                if (1 || (gameWrapper->GetMMRWrapper().IsSynced(uniqueID, userPlaylist) && !gameWrapper->GetMMRWrapper().IsSyncing(uniqueID))) {
+
+                    // Makes sure it is one of the ranked gamemodes to prevent crashes
+                    if (!(find(begin(rankedPlaylists), end(rankedPlaylists), userPlaylist) != end(rankedPlaylists))) {
+                        return;
+                    }
+
+                    // Getting the mmr
+                    userMMR = gameWrapper->GetMMRWrapper().GetPlayerMMR(uniqueID, userPlaylist);
+                    gotNewMMR = true;
+
+                    MMRWrapper mw = gameWrapper->GetMMRWrapper();
+
+                    // The SkillRank has information about the players rank
+                    SkillRank userRank = mw.GetPlayerRank(uniqueID, userPlaylist);
+
+                    // Getting the player rank information into separate variables
+                    userDiv = userRank.Division;
+                    userTier = userRank.Tier;
+
+                    // Converts the tier and div into the division with the roman numeral (I, II, III, IV)
+                    nameCurrent = GetDivName(userTier, userDiv);
+
+                    // Gets and loads the rank icon for your current rank from the RankViewer folder
+                    string fileName;
+                    fileName = std::to_string(userTier) + ".png";
+                    const auto currentPath = gameWrapper->GetDataFolder() / "RankViewer" / "RankIcons" / fileName;
+                    currentRank = std::make_shared<ImageWrapper>(currentPath, false, true);
+
+                    // This all checks for different scenarios where it won't be the default method of displaying
+                    if (userTier <= 0) { // --- When still in placement matches -- 
+                        // For placement shows from bronze 1 and supersonic legend
+                        lowerTier = 1;
+                        upperTier = 22;
+
+                        nextLower = unranker(userPlaylist, upperTier, 0, true); // div has to be I (0) since ssl doesn't have divisions
+                        nameNext = GetDivName(22, 0);
+
+                        beforeUpper = unranker(userPlaylist, lowerTier, 0, false);
+                        nameBefore = GetDivName(0, 0); // This inputs the unranked name since it just won't show the division number
+                    }
+                    else if (userTier == 1 && userDiv == 0) {
+                        // For bronze 1 div 1. It just shows the bronze 1 div 1 lower limit on the bottom and bronze 1 div 2 on top
+                        upperTier = userTier;
+                        lowerTier = userTier;
+                        upperDiv = userDiv + 1;
+                        lowerDiv = 0;
+
+                        // Finds the mmr for that div and tier
+                        nextLower = unranker(userPlaylist, upperTier, upperDiv, false);
+                        nameNext = GetDivName(upperTier, upperDiv);
+
+                        beforeUpper = unranker(userPlaylist, lowerTier, lowerDiv, false);
+                        nameBefore = GetDivName(lowerTier, lowerDiv);
+                    }
+                    else if (userTier == 22) {
+                        // For ssl. Shows the ssl upper limit on top and gc 3 div 4 on bottom
+                        upperTier = userTier;
+                        lowerTier = userTier - 1;
+                        upperDiv = userDiv;
+                        lowerDiv = 3;
+
+                        // Finds the mmr for that div and tier
+                        nextLower = unranker(userPlaylist, upperTier, upperDiv, true);
+                        nameNext = GetDivName(upperTier, upperDiv);
+
+                        beforeUpper = unranker(userPlaylist, lowerTier, lowerDiv, true);
+                        nameBefore = GetDivName(lowerTier, lowerDiv);
+                    }
+                    else {
+                        // Finds out what div is above and below you
+                        if (userDiv == 0) {
+                            upperTier = userTier;
+                            lowerTier = userTier - 1;
+                            upperDiv = userDiv + 1;
+                            lowerDiv = 3;
+
+                        }
+                        else if (userDiv == 3) {
+                            upperTier = userTier + 1;
+                            lowerTier = userTier;
+                            upperDiv = 0;
+                            lowerDiv = userDiv - 1;
+                        }
+                        else {
+                            upperTier = userTier;
+                            lowerTier = userTier;
+                            upperDiv = userDiv + 1;
+                            lowerDiv = userDiv - 1;
+                        }
+
+                        // Finds the mmr for that div and tier
+                        nextLower = unranker(userPlaylist, upperTier, upperDiv, false);
+                        nameNext = GetDivName(upperTier, upperDiv);
+
+                        beforeUpper = unranker(userPlaylist, lowerTier, lowerDiv, true);
+                        nameBefore = GetDivName(lowerTier, lowerDiv);
+                    }
+
+                    // Gets correct rank icons from folder for before and after ranks
+                    fileName = std::to_string(lowerTier) + ".png";
+                    const auto beforePath = gameWrapper->GetDataFolder() / "RankViewer" / "RankIcons" / fileName;
+                    beforeRank = std::make_shared<ImageWrapper>(beforePath, false, true);
+
+                    fileName = std::to_string(upperTier) + ".png";
+                    const auto nextPath = gameWrapper->GetDataFolder() / "RankViewer" / "RankIcons" / fileName;
+                    nextRank = std::make_shared<ImageWrapper>(nextPath, false, true);
+
+                    // Lets rank viewer display
+                    drawCanvas = true;
+                }
+                // Failsafe
+                if (!gotNewMMR && retryCount > 0) {
+                    gameWrapper->SetTimeout([retryCount, this](GameWrapper* gameWrapper) {
+                        this->CheckMMR(retryCount - 1);
+                        }, 0.5f);
+                }
+                else {
+                    return;
+                }
+            }
+            }, 3);
+    }
+}
+
+
+// Decides if it should render or not
 void RankViewer::Render()
 {
-    // Only displays if the user has the plugin enableds
+    // Only displays if the user has the plugin enableded
     isEnabled = cvarManager->getCvar("rankviewer_enabled").getBoolValue();
     if (!isEnabled) {
         return;
@@ -174,7 +303,7 @@ void RankViewer::Render()
     bool inGame = gameWrapper->IsInOnlineGame();
     if (!inGame) {
         drawCanvas = false;
-        return; //undo this comment on release
+        return;
     }
 
     if (drawCanvas) {
@@ -182,41 +311,32 @@ void RankViewer::Render()
     }
 }
 
+
+// The actual rendering of imgui
 void RankViewer::RenderImGui()
 {
+    // Percentages for converting to a non-1080p screen
     float xPercent = ((float)screenSize.X / 1920);
     float yPercent = ((float)screenSize.Y / 1080);
     float upperBound = (290);
     float lowerBound = (835);
 
+    // The imgui window allows the quads to show on the screen
     ImVec2 windowPos = ImVec2((1660 * xPercent), 0);
-
     ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(screenSize.X - (1660 * xPercent) + (10 * xPercent), screenSize.Y + (10 * yPercent)));
 
     auto gui = gameWrapper->GetGUIManager();
     fontBig = gui.GetFont("PantonBig");
 
+    // Early out if the window is collapsed, as an optimization.
     if (!ImGui::Begin(menuTitle_.c_str(), &isWindowOpen_, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar))
     {
-        // Early out if the window is collapsed, as an optimization.
         ImGui::End();
         return;
     }
 
-    /*
-    nextLower = 1342;
-    beforeUpper = 1335;
-    userMMR = 1336;
-    */
-
-    //ImGui::ShowDemoWindow();
-
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    
-
-    
-    
 
     // Sidebar
     ImVec2 centerPoint = ImVec2(1920, 950);
@@ -225,9 +345,8 @@ void RankViewer::RenderImGui()
                             ImVec2(xPercent * (centerPoint.x - 45), yPercent * (centerPoint.y - 820)),
                             ImVec2(xPercent * (centerPoint.x), yPercent * (centerPoint.y - 820)),
                             IM_COL32_BLACK);
-
     
-    // Lower Box
+    // --- Lower Box ---
     // Displays the box
     centerPoint = ImVec2(1875, 950);
     drawList->AddQuadFilled(ImVec2(xPercent * (centerPoint.x), yPercent * (centerPoint.y)),
@@ -256,8 +375,7 @@ void RankViewer::RenderImGui()
         drawList->AddText(fontBig, defaultFontSize, ImVec2(xPercent * (centerPoint.x), yPercent * (centerPoint.y - 75)), ImU32(white), nameBefore.c_str());
         ImGui::PopFont();
     }
-
-    // Displays image
+    // Displays rank image
     if (beforeRank->IsLoadedForImGui()) {
         if (auto beforeRankTex = beforeRank->GetImGuiTex()) {
             auto beforeRankRect = beforeRank->GetSizeF();
@@ -267,6 +385,7 @@ void RankViewer::RenderImGui()
     }
 
     // Upper Box
+    // Displays the box
     centerPoint = ImVec2(1875, 175);
     drawList->AddQuadFilled(ImVec2(xPercent * (centerPoint.x), yPercent * (centerPoint.y)),
         ImVec2(xPercent * (centerPoint.x - 180), yPercent * (centerPoint.y)),
@@ -277,6 +396,7 @@ void RankViewer::RenderImGui()
         ImVec2(xPercent * (centerPoint.x - 35), yPercent * (centerPoint.y)),
         ImVec2(xPercent * (centerPoint.x), yPercent * (centerPoint.y + 35)),
         IM_COL32_BLACK);
+    // Displays fonts
     if (fontBig) {
         float defaultFontSize = 35 * xPercent;
         ImGui::PushFont(fontBig);
@@ -293,7 +413,7 @@ void RankViewer::RenderImGui()
         drawList->AddText(fontBig, defaultFontSize, ImVec2(xPercent * (centerPoint.x), yPercent * (centerPoint.y - 40)), ImU32(white), nameNext.c_str());
         ImGui::PopFont();
     }
-
+    // Displays rank image
     if (nextRank->IsLoadedForImGui()) {
         if (auto nextRankTex = nextRank->GetImGuiTex()) {
             auto nextRankRect = nextRank->GetSizeF();
@@ -313,6 +433,7 @@ void RankViewer::RenderImGui()
     
 
     // Middle Box
+    // Displays the box
     centerPoint = ImVec2(1875, yPos); 
     drawList->AddQuadFilled(ImVec2(xPercent * (centerPoint.x), yPercent * (centerPoint.y)),
         ImVec2(xPercent * (centerPoint.x - 180), yPercent * (centerPoint.y)),
@@ -332,6 +453,7 @@ void RankViewer::RenderImGui()
         ImVec2(xPercent * (centerPoint.x - 35), yPercent * (centerPoint.y - 45)),
         ImVec2(xPercent * (centerPoint.x), yPercent * (centerPoint.y - 80)),
         lightBlue);
+    // Displays fonts
     if (fontBig) {
         float defaultFontSize = 35 * xPercent;
         ImGui::PushFont(fontBig);
@@ -348,7 +470,7 @@ void RankViewer::RenderImGui()
         drawList->AddText(fontBig, defaultFontSize, ImVec2(xPercent * (centerPoint.x), yPercent * (centerPoint.y - 65)), ImU32(darkBlue), nameCurrent.c_str());
         ImGui::PopFont();
     }
-
+    // Displays rank image
     if (currentRank->IsLoadedForImGui()) {
         if (auto currentRankTex = currentRank->GetImGuiTex()) {
             auto currentRankRect = currentRank->GetSizeF();
@@ -365,17 +487,20 @@ void RankViewer::RenderImGui()
     }
 }
 
+
 // Name of the menu that is used to toggle the window.
 std::string RankViewer::GetMenuName()
 {
     return "RankViewer";
 }
 
+
 // Title to give the menu
 std::string RankViewer::GetMenuTitle()
 {
     return menuTitle_;
 }
+
 
 // Don't call this yourself, BM will call this function with a pointer to the current ImGui context
 void RankViewer::SetImGuiContext(uintptr_t ctx)
@@ -385,23 +510,8 @@ void RankViewer::SetImGuiContext(uintptr_t ctx)
     auto gui = gameWrapper->GetGUIManager();
 
     gui.LoadFont("PantonBig", "Panton-LightCaps.otf", 32);
-
-    /*
-    std::tuple<int, ImFont*> newFont = gui.LoadFont("PantonBig", "Panton-LightCaps.otf", 30);
-    std::tuple<int, ImFont*> newFont3 = gui.LoadFont("PantonSmall", "Panton-LightCaps.otf", 1);
-
-    if (std::get<0>(newFont) == 0) {
-        cvarManager->log("Failed to load the font!");
-    }
-    else if (std::get<0>(newFont) == 1) {
-        cvarManager->log("The font will be loaded");
-    }
-    else if (std::get<0>(newFont) == 2 && std::get<1>(newFont)) {
-        fontBig = std::get<1>(newFont);
-        fontSmall = std::get<1>(newFont3);
-    }
-    */
 }
+
 
 // Should events such as mouse clicks/key inputs be blocked so they won't reach the game
 bool RankViewer::ShouldBlockInput()
@@ -409,11 +519,13 @@ bool RankViewer::ShouldBlockInput()
     return ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
 }
 
+
 // Return true if window should be interactive
 bool RankViewer::IsActiveOverlay()
 {
     return false;
 }
+
 
 // Called when window is opened
 void RankViewer::OnOpen()
@@ -421,92 +533,15 @@ void RankViewer::OnOpen()
     isWindowOpen_ = true;
 }
 
+
 // Called when window is closed
 void RankViewer::OnClose()
 {
     isWindowOpen_ = false;
 }
 
-/*
-void RankViewer::Render(CanvasWrapper canvas)
-{
-    // Only displays if the user has the plugin enableds
-    isEnabled = cvarManager->getCvar("rankviewer_enabled").getBoolValue();
-    if (!isEnabled) {
-        return;
-    }
 
-    // Makes sure you are in the game
-    bool inGame = gameWrapper->IsInOnlineGame();
-    if (!inGame) {
-        drawCanvas = false;
-        return;
-    }
-
-    if (drawCanvas) {
-        
-        Vector2 screen = canvas.GetSize();
-
-        float fontSize = (float)screen.X / (float)1920;
-
-        if (!isPlacement) {
-            // 1-1
-            canvas.SetColor(233, 238, 240, 255);
-            canvas.SetPosition(Vector2{ int(screen.X * .2) , int(screen.Y * .7) });
-            canvas.DrawString("Next: ", 2 * fontSize, 2 * fontSize);
-
-            // 1-2
-            canvas.SetColor(colorNext[0], colorNext[1], colorNext[2], 255);
-            canvas.SetPosition(Vector2{ int(screen.X * .24) , int(screen.Y * .7) });
-            canvas.DrawString(nameNext + ": ", 2 * fontSize, 2 * fontSize);
-
-            // 1-3
-            canvas.SetColor(233, 238, 240, 255);
-            canvas.SetPosition(Vector2{ int(screen.X * .37) , int(screen.Y * .7) });
-            canvas.DrawString(std::to_string(nextLower) + nextDiff, 2 * fontSize, 2 * fontSize);
-        }
-        else {
-            // Placement Warning
-            canvas.SetColor(colorCurrent[0], colorCurrent[1], colorCurrent[2], 255);
-            canvas.SetPosition(Vector2{ int(screen.X * .18) , int(screen.Y * .7) });
-            canvas.DrawString("Finish placements for full functionality!", 2 * fontSize, 2 * fontSize);
-        }
-        
-        // 2-1
-        canvas.SetColor(233, 238, 240, 255);
-        canvas.SetPosition(Vector2{ int(screen.X * .18) , int(screen.Y * .735) });
-        canvas.DrawString("Current: ", 2 * fontSize, 2 * fontSize);
-
-        // 2-2
-        canvas.SetColor(colorCurrent[0], colorCurrent[1], colorCurrent[2], 255);
-        canvas.SetPosition(Vector2{ int(screen.X * .24) , int(screen.Y * .735) });
-        canvas.DrawString(nameCurrent + ": ", 2 * fontSize, 2 * fontSize);
-
-        // 2-3
-        canvas.SetColor(233, 238, 240, 255);
-        canvas.SetPosition(Vector2{ int(screen.X * .37) , int(screen.Y * .735) });
-        canvas.DrawString(std::to_string((int)(round(userMMR))), 2 * fontSize, 2 * fontSize);
-
-        if (!isPlacement) {
-            // 3-1
-            canvas.SetColor(233, 238, 240, 255);
-            canvas.SetPosition(Vector2{ int(screen.X * .175) , int(screen.Y * .77) });
-            canvas.DrawString("Previous: ", 2 * fontSize, 2 * fontSize);
-
-            // 3-2
-            canvas.SetColor(colorBefore[0], colorBefore[1], colorBefore[2], 255);
-            canvas.SetPosition(Vector2{ int(screen.X * .24) , int(screen.Y * .77) });
-            canvas.DrawString(nameBefore + ": ", 2 * fontSize, 2 * fontSize);
-
-            // 3-3
-            canvas.SetColor(233, 238, 240, 255);
-            canvas.SetPosition(Vector2{ int(screen.X * .37) , int(screen.Y * .77) });
-            canvas.DrawString(std::to_string(beforeUpper) + beforeDiff, 2 * fontSize, 2 * fontSize);
-        }
-    }
-}
-*/
-
+// Called when the game ends
 void RankViewer::StatsScreen(std::string eventName)
 {
     isEnabled = cvarManager->getCvar("rankviewer_enabled").getBoolValue();
@@ -514,169 +549,29 @@ void RankViewer::StatsScreen(std::string eventName)
         return;
     }
 
+    // Getting the playlist and steam/epic id
     MMRWrapper mw = gameWrapper->GetMMRWrapper();
 
     uniqueID = gameWrapper->GetUniqueID();
     userPlaylist = mw.GetCurrentPlaylist();
 
-    // Maybe delete this idk
+    // Gets the screen size in case it changed from the last time
     screenSize = gameWrapper->GetScreenSize();
     //safeZone = gameWrapper->GetSafeZoneRatio();
     //uiScale = gameWrapper->GetUIScale();
 
+    // The friend menu automatically closes when the game finishes
     isFriendOpen = false;
 
+    // Getting the mmr, and after that all of the rank information needed
     if (mw.IsRanked(userPlaylist)) {
-
         // Makes sure the mmr updates
         CheckMMR(5);
     }
 }
 
-void RankViewer::CheckMMR(int retryCount)
-{
-    isEnabled = cvarManager->getCvar("rankviewer_enabled").getBoolValue();
-    if (!isEnabled) {
-        return;
-    }
 
-    // The updateMMR section is all from mega's plugin: SessionStats. Please view it here, its great :) https://bakkesplugins.com/plugins/view/39
-
-    ServerWrapper sw = gameWrapper->GetOnlineGame();
-
-    if (sw.IsNull() || !sw.IsOnlineMultiplayer() || gameWrapper->IsInReplay())
-        return;
-
-    if (retryCount > 20 || retryCount < 0)
-        return;
-
-    if (userPlaylist != 0) {
-        gameWrapper->SetTimeout([retryCount, this](GameWrapper* gameWrapper) {
-            gotNewMMR = false;
-            while (!gotNewMMR) {
-                if (1 || (gameWrapper->GetMMRWrapper().IsSynced(uniqueID, userPlaylist) && !gameWrapper->GetMMRWrapper().IsSyncing(uniqueID))) {
-                    
-                    // Makes sure it is one of the ranked gamemodes to prevent crashes
-                    if (!(find(begin(rankedPlaylists), end(rankedPlaylists), userPlaylist) != end(rankedPlaylists))) {
-                        return;
-                    }
-                    
-                    userMMR = gameWrapper->GetMMRWrapper().GetPlayerMMR(uniqueID, userPlaylist);
-                    gotNewMMR = true;
-
-                    MMRWrapper mw = gameWrapper->GetMMRWrapper();
-
-                    // The SkillRank has information about the players rank
-                    SkillRank userRank = mw.GetPlayerRank(uniqueID, userPlaylist);
-
-                    // Getting the player rank information into separate variables
-                    userDiv = userRank.Division;
-                    userTier = userRank.Tier;
-                    
-                    // Converts the Div and Tier into actual usable names
-                    nameCurrent = GetRankName(userTier, userDiv);
-
-                    string fileName;
-
-                    fileName = std::to_string(userTier) + ".png";
-                    const auto currentPath = gameWrapper->GetDataFolder() / "RankViewer" / "RankIcons" / fileName;
-                    currentRank = std::make_shared<ImageWrapper>(currentPath, false, true);
-
-
-                    if (userTier <= 0) {
-                        isPlacement = true;
-
-                        lowerTier = 1;
-                        upperTier = 22;
-
-                        nextLower = unranker(userPlaylist, upperTier, 0, true);
-                        nameNext = GetRankName(22, 0);
-
-                        beforeUpper = unranker(userPlaylist, lowerTier, 0, false);
-                        nameBefore = GetRankName(0, 0); // technically this is unranked but i just don't want the div to show
-                    }
-                    else if (userTier == 1 && userDiv == 0) {
-                        upperTier = userTier;
-                        lowerTier = userTier;
-                        upperDiv = userDiv + 1;
-                        lowerDiv = 0;
-
-                        // Finds the mmr for that div and tier
-                        nextLower = unranker(userPlaylist, upperTier, upperDiv, false);
-                        nameNext = GetRankName(upperTier, upperDiv);
-
-                        beforeUpper = unranker(userPlaylist, lowerTier, lowerDiv, false);
-                        nameBefore = GetRankName(lowerTier, lowerDiv);
-                    }
-                    else if (userTier == 22) {
-                        upperTier = userTier;
-                        lowerTier = userTier - 1;
-                        upperDiv = userDiv;
-                        lowerDiv = 3;
-
-                        // Finds the mmr for that div and tier
-                        nextLower = unranker(userPlaylist, upperTier, upperDiv, true);
-                        nameNext = GetRankName(upperTier, upperDiv);
-
-                        beforeUpper = unranker(userPlaylist, lowerTier, lowerDiv, true);
-                        nameBefore = GetRankName(lowerTier, lowerDiv);
-                    }
-                    else {
-                        isPlacement = false;
-                        // Finds out what div is above and below you
-                        if (userDiv == 0) {
-                            upperTier = userTier;
-                            lowerTier = userTier - 1;
-                            upperDiv = userDiv + 1;
-                            lowerDiv = 3;
-
-                        }
-                        else if (userDiv == 3) {
-                            upperTier = userTier + 1;
-                            lowerTier = userTier;
-                            upperDiv = 0;
-                            lowerDiv = userDiv - 1;
-                        }
-                        else {
-                            upperTier = userTier;
-                            lowerTier = userTier;
-                            upperDiv = userDiv + 1;
-                            lowerDiv = userDiv - 1;
-                        }
-
-                        // Finds the mmr for that div and tier
-                        nextLower = unranker(userPlaylist, upperTier, upperDiv, false);
-                        nameNext = GetRankName(upperTier, upperDiv);
-
-                        beforeUpper = unranker(userPlaylist, lowerTier, lowerDiv, true);
-                        nameBefore = GetRankName(lowerTier, lowerDiv);
-                    }
-
-                    // Gets correct rank icons from folder  HEYEYYEYYEY DON't forget that the currentRank needs to be before the placement checl
-                    fileName = std::to_string(lowerTier) + ".png";
-                    const auto beforePath = gameWrapper->GetDataFolder() / "RankViewer" / "RankIcons" / fileName;
-                    beforeRank = std::make_shared<ImageWrapper>(beforePath, false, true);
-
-                    fileName = std::to_string(upperTier) + ".png";
-                    const auto nextPath = gameWrapper->GetDataFolder() / "RankViewer" / "RankIcons" / fileName;
-                    nextRank = std::make_shared<ImageWrapper>(nextPath, false, true);
-                    
-                    drawCanvas = true;
-                }
-                if (!gotNewMMR && retryCount > 0) {
-                    gameWrapper->SetTimeout([retryCount, this](GameWrapper* gameWrapper) {
-                        this->CheckMMR(retryCount - 1);
-                        }, 0.5f);
-                }
-                else {
-                    return;
-                }
-            }
-            }, 3);
-    }
-}
-
-
+// Called when you go back to the main menu
 void RankViewer::loadMenu(std::string eventName)
 {
     // Removes canvas if you quit the stats screen
@@ -685,6 +580,8 @@ void RankViewer::loadMenu(std::string eventName)
     
 }
 
+
+// Called when you open or close the friend tab
 // Brank love you <3 this all him
 void RankViewer::friendScreen(ActorWrapper caller, void* params, const std::string& functionName)
 {
@@ -714,45 +611,4 @@ void RankViewer::friendScreen(ActorWrapper caller, void* params, const std::stri
     
 }
 
-void RankViewer::onUnload()
-{
-    gameWrapper->UnhookEvent("Function TAGame.GameEvent_Soccar_TA.EventMatchEnded");
-    gameWrapper->UnregisterDrawables();
-}
-
-/*
-DivisionData RankViewer::GetDivisionData(Playlists mode, Rank rank, int div)
-{
-    auto playlistSearch = playlistMMRDatabase.find(mode);
-    if (playlistSearch != playlistMMRDatabase.end())
-    {
-        auto playlist = playlistSearch->second;
-        if (playlist.tiers.size() > rank)
-        {
-            auto tier = playlist.tiers[rank];
-            if (tier.divisions.size() > div)
-            {
-                return tier.divisions[div];
-            }
-        }
-    }
-    return DivisionData();
-}
-
-void RankViewer::DebugGetDivisionData(std::vector<std::string> args)
-{
-    if (args.size() != 4)
-    {
-        cvarManager->log("Usage:" + args[0] + " mode rank div");
-        return;
-    }
-
-    Playlists mode =  (Playlists) get_safe_int(args[1]);
-    Rank rank = (Rank) get_safe_int(args[2]);
-    int div = get_safe_int(args[3]);
-
-    auto divData = GetDivisionData(mode, rank, div);
-    cvarManager->log("Lower:" + to_string(divData.lower) + " Higher: " + to_string(divData.higher));
-}
-*/
 
